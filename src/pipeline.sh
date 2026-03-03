@@ -138,7 +138,7 @@ python3 -m venv venv
 source venv/bin/activate
 
 # Step 1: Install dependencies
-pip install --no-cache-dir -r requirements.txt
+#pip install --no-cache-dir -r requirements.txt
 
 # Step 2: Run extract_mutations.py
 python check_format.py -u "$mut_file"  -m "$meta_file"
