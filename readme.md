@@ -1,79 +1,260 @@
-# Mutation Tracking Tutorial
+# MuTEXA
+### MUTation EXplorer & Analyzer
 
-## Introduction
+MuTEXA is a command-line tool for tracking mutations of interest and analysing their temporal dynamics across populations using genomic sequences and associated metadata.
 
-This tutorial provides an overview of the mutation tracking pipeline to extract mutations of interest and calculate the increase versus a wildtype allele over a specified time period.
+The tool extracts mutations from genomic data, integrates metadata, and generates rolling-average visualisations to explore mutation frequency trends over time.
 
-The data for this tutorial can be accessed on [GitHub](https://bitbucket.csiro.au/users/jai014/repos/strepifun/browse/ExampleData?at=dev).
+---
 
-## Tool Versions
+# Overview
 
-1. Webserver (webserver address)
-2. Standalone (this github)
+MuTEXA processes genomic sequence data together with metadata to:
 
-![Mutations Example](./images/MutationTracking.png)
+- Extract mutations of interest from sequence alignments
+- Integrate genomic data with sample metadata
+- Monitor mutation frequencies over time
+- Generate rolling-average visualisations for mutation dynamics
 
-## Required Input Files
+The tool supports **FASTA alignments** and **VCF files** as input formats.
 
-1. Alignment file in FASTA or VCF format
-2. Reference file in FASTA format
-3. Mutations file in CSV format:
-    - Mutation Name: A unique identifier for the mutation.
-    - Position: The genomic position of the mutation.
-    - Ref: The reference allele at the mutation position.
-    - Alt: The alternate allele at the mutation position.
-    - Example input:
+---
 
-        ![Mutations Example](./images/mutation.png)
+# Installation
 
-4. Metadata file in CSV format:
-    - Accession_id: Identifier for the sample. Accession_id should be the same as the accession_id in the fasta/VCF file.
-    - Collection Date: Date when the sample was collected.
-    - Location: Geographical location, including country and state.
-    - Optional columns may include Lineage or Group.
-
-        Example file:
-
-        ![Metadata Example](./images/metaData.png)
-5. Categorizing: Categorizing class. Avaiable options: country/continent/lineage 
-## Optional Parameters
-
-- Start date: Starting date for filtering metadata (Default: 365 days before today)
-- End date: Ending date for filtering metadata (Default: today)
-- Threshold: Threshold for filtering haplotypes by frequency (Default: 0)
-- Days: Window size for monitoring the mutation
-- Prefix: Prefix to save outputs (Default: 'output')
-
-## Standalone Version
-
-The pipeline is equipped with essential libraries, automatically installing them on your machine if they are not already present. Simply execute the pipeline, and it will take care of the necessary installations for you.
-
-## Usage
-
-Change the directory to the current folder and then use this command to see the help:
+Clone the repository:
 
 ```bash
-./pipeline [-h]
+git clone https://github.com/nehlehk/Mutexa.git
+cd Mutexa
 ```
 
-To see the reguired input use this command: 
+Create a virtual environment (recommended):
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+
+Install MuTEXA:
+```bash
+pip install .
+```
+
+Verify installation:
+```bash
+mutexa --help
+```
+
+# Input Files
+
+MuTEXA requires the following input files.
+
+### 1. Alignment file
+
+FASTA or VCF format containing genomic sequences.
+
+Example:
+```bash
+examples/seqs.fasta
+```
+
+### 2. Reference genome
+
+FASTA file containing the reference sequence.
+
+Example:
+```bash
+examples/refSeq.fasta
+```
+
+### 3. Mutation file (CSV)
+
+Defines mutations to track.
+
+**Required fields:**
+
+- **Mutation Name** – unique identifier for the mutation  
+- **Position** – genomic position of the mutation  
+- **Ref** – reference allele at that position  
+- **Alt** – alternate allele  
+
+**Example format:**
+
+| Mutation | Position | Ref | Alt |
+|----------|----------|-----|-----|
+| A222V    | 222      | A   | V   |
+
+
+
+### 4. Metadata file (CSV)
+
+Metadata describing each sequence.
+
+**Required columns:**
+
+- **Accession_id** – must match the sequence identifiers in the FASTA/VCF file  
+- **Collection_date** – date when the sample was collected  
+- **Location** – geographic location of the sample  
+
+**Optional columns:**
+
+- **lineage**
+- **group**
+
+**Example file:**
+```bash
+examples/metadata.csv
+```
+
+
+### 5. Categorization
+
+Grouping variable used for analysis.
+
+Available options:
+```bash
+country
+continent
+lineage
+```
+
+# Running MuTEXA
+
+Example command using the provided example data:
 
 ```bash
-./pipeline.sh [-h] -u <mut_file> -a <align_file> -m <meta_file> -r <ref_genome> -s <start_date> -e <end_date> -p <prefix> -t <threshold> -d <days> -c <Categorizing>
+mutexa \
+-u examples/mutation.csv \
+-a examples/seqs_small.fasta \
+-m examples/metadata.csv \
+-r examples/refSeq.fasta \
+-s 2020-09-01 \
+-e 2021-01-30 \
+-p example \
+-t 0.2 \
+-d 14 \
+-c country
 ```
-Let's run the pipeline using the example data: 
+
+
+# Command Line Arguments
+
+Required:
 ```bash
-./pipeline.sh -u ExampleData/mutation.csv -a ExampleData/seqs.fasta -m ExampleData/metadata.csv -r ExampleData/refSeq.fasta -s 2020-09-01 -e 2021-01-30 -p example -t .2 -d 14 -c country
+-u, --mut       Mutation file (CSV)
+-a, --align     Alignment file (FASTA or VCF)
+-m, --meta      Metadata file (CSV)
+-c, --cat       Categorization column (country | continent | lineage)
+
 ```
 
-## Output
-- Heatmap plots. Here is an example of a heatmap plot from the example data:
-     <br> <img src="images/example_Heatmaps_mut:A222V_t:0.2.jpeg" alt="heatmap Example" width="1100" height="400" />
+Optional:
+```bash
+-s, --start     Start date (YYYY-MM-DD)
+-e, --end       End date
+-p, --prefix    Output file prefix
+-t, --thresh    Frequency threshold
+-d, --days      Sliding window size
+-r, --ref       Reference genome (FASTA)
 
-  - Rolling average plots. Here is an example of a rolling average plot from the example data:
-      <br> <img src="images/example_RollingAvg_mut:A222V_t:0.2.jpeg" alt="rolling Example" width="900" height="550" />
+```
+
+# Output
+
+Results are written to the outputs/ directory.
+
+Example outputs:
+
+```bash
+outputs/
+example_mutlist.csv
+example_hapdict.csv
+example_ratioData.csv
+example_countryRatios_0.2.csv
+example_country_plot.pdf
+
+```
+
+## Visualisations
+
+MuTEXA generates visualisations to explore mutation dynamics over time.
+
+### Heatmap Example
+
+An example heatmap showing mutation frequency patterns across categories.
+
+![Heatmap Example](images/example_Heatmaps_mut_A222V_t_0.2.jpeg)
+
+---
+
+### Rolling Average Plot Example
+
+An example rolling average plot illustrating the temporal dynamics of a mutation.
+
+![Rolling Average Example](images/example_RollingAvg_mut_A222V_t_0.2.jpeg)
 
 
+# Example Data
 
-      
+Example datasets are included in the repository to allow immediate testing.
+
+```bash
+examples/
+mutation.csv
+metadata.csv
+refSeq.fasta
+seqs_small.fasta
+
+```
+
+These files allow users to run MuTEXA directly after installation.
+
+
+# Repository Structure
+
+```bash
+Mutexa
+│
+├── examples
+│   ├── mutation.csv
+│   ├── metadata.csv
+│   ├── refSeq.fasta
+│   └── seqs_small.fasta
+│
+├── images
+│
+├── src
+│   └── mutexa
+│       ├── cli.py
+│       ├── check_format.py
+│       ├── extract_mutations.py
+│       ├── merge_meta.py
+│       └── rollingAvePlots.py
+│
+├── pyproject.toml
+├── README.md
+└── .gitignore
+
+```
+
+
+# License
+
+Specify the license for MuTEXA (e.g. MIT License).
+
+
+# Citation
+
+If you use MuTEXA in your research, please cite the associated publication.
+
+```bash
+Citation details will be added after publication.
+```
+
+# Contact
+
+For issues, feature requests, or questions, please open an issue on GitHub.
+
+https://github.com/nehlehk/Mutexa/issues
+
 
