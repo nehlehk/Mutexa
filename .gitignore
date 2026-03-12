@@ -1,0 +1,7 @@
+examples/seqs.fasta
+outputs/
+venv/
+*.egg-info/
+__pycache__/
+*.pyc
+.DS_Store

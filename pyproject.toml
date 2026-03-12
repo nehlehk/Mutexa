@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mutexa"
+version = "1.0.0"
+description = "Mutation Explorere & Analysis"
+authors = [
+  {name = "Carol Lee and Nehleh Kargarfard"}
+]
+readme = "README.md"
+requires-python = ">=3.9"
+
+dependencies = [
+  "pandas",
+  "numpy",
+  "biopython",
+  "matplotlib",
+  "tqdm"
+  "seaborn"
+]
+
+[project.scripts]
+mutexa = "mutexa.cli:main"
