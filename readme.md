@@ -210,6 +210,15 @@ seqs_small.fasta
 These files allow users to run MuTEXA directly after installation.
 
 
+## Optional publication-quality plotting
+
+An additional standalone script for generating publication-ready figures is available in:
+
+```bash
+scripts/make_publishable_plots.py
+```
+
+
 # Repository Structure
 
 ```bash
@@ -231,6 +240,8 @@ Mutexa
 │       ├── merge_meta.py
 │       └── rollingAvePlots.py
 │
+├── scripts/
+│   └── make_publishable_plots.py
 ├── pyproject.toml
 ├── README.md
 └── .gitignore
