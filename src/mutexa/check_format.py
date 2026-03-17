@@ -73,8 +73,6 @@ if __name__ == '__main__':
     metaFile = args.metaFile
     # refFile = args.ref
 
-    # metaFile = '/Users/kar145/Projects/strepifun/inputs/testing_files/MPXV-test-data/metadata031123_subset-all.csv'
-    # mutFile = '/Users/kar145/Projects/strepifun/inputs/testing_files/MPXV-test-data/mpxv_mutlist_new.csv'
 
     # check the format of mutation file
     check_mutfile_format(mutFile)
