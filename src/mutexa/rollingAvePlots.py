@@ -15,6 +15,7 @@ from matplotlib.colors import LinearSegmentedColormap
 import pathlib
 import matplotlib.ticker as mtick
 import warnings
+import json
 
 
 def initialization(csvfile):
@@ -275,6 +276,15 @@ def run_plots(
             # if not heatmaptoshow.empty:
             results = heatmaptoshow.T
             results.reset_index()
+
+            plotly_dict = {# March 2026
+                    "type": "heatmap",
+                    "x": results.columns.strftime('%Y-%m-%d').tolist(),        # dates
+                    "y": results.index.tolist(),          # IIb, IIa, Ia etc
+                    "z": results.values.tolist(),         # shape (len(y), len(x)) ✓
+                    "showscale": True}  
+            with open("outputs/"+prefix +"_" + m + str(threshold)+'_heatmapmatrix.json', 'w') as f:
+                json.dump(plotly_dict, f)
             results = results.rename_axis(userColumn)
             
             if 'country' in results.columns:
@@ -423,6 +433,7 @@ def run_plots(
             plt.tight_layout()
             plot.yaxis.set_major_formatter(matplotlib.ticker.StrMethodFormatter('{x:,.0f}'))
             plt.savefig("outputs/"+prefix+"_RollingAvg_mut:" + m + '_t:' + str(threshold) + ".jpeg", bbox_inches="tight", dpi=600)
+            result.to_csv("outputs/" + prefix + "_RollingAvg_mut" +  m + "_t" + str(threshold) + ".csv") # March 2026
         else:
             print(m) # Carol - This line might be useless now after adding rolling_plots variable
             print("No observed mutations")
