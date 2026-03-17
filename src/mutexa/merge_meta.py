@@ -27,7 +27,7 @@ def get_continent(country_name):
     return None  # Return None if the country is not found in any continent
 
 
-def data_preprocessing(df):
+def data_preprocessing(df,userColumn):
     # change to column name to the desired one
     # change the date format to desired one
     # if the host value is absent fill it with unknown value to avoid error later
@@ -117,8 +117,12 @@ def data_preprocessing(df):
             gender = name
             gender1 = 'gender'
             col_dict.update({gender: gender1})
-        else:
-            df.drop([name], axis=1, inplace=True)
+        else: 
+            # df.drop([name], axis=1, inplace=True)
+            if name.lower() != userColumn.lower(): # Carol New 2026 rewritten to drop columns if is NOT user defined column
+                df.drop([name], axis=1, inplace=True) 
+            if name.lower() == userColumn.lower(): # Carol New 2026 if user defined column is in metadata file, add to col_dict
+                col_dict.update({name: userColumn.lower()})
     # rename the columns to the new names by using dictionary
     df.rename(columns=col_dict, inplace=True)
     # add column WHO at the end of our dataset
@@ -131,9 +135,6 @@ def days_between(d1, d2):
     d1 = datetime.strptime(d1, "%Y-%m-%d")
     d2 = datetime.strptime(d2, "%Y-%m-%d")
     return abs((d2 - d1).days)
-
-
-
 
 
 
@@ -189,14 +190,6 @@ def run_merge(
     else:
         prefix = prefix
 
-    # startDate = "2019-01-01"
-    # endDate = "2021-02-01"
-    # R2_threshold = 0
-    # metaFile = "ExampleData/metadata.csv"
-    # mutFile = "ExampleData/mutation.csv"
-    # prefix = "example"
-    # minDays = 28
-    # userColumn = 'lineage'
 
     mutlist_path = 'outputs/' + str(prefix) + '_mutlist.csv'
     hapdict_path = 'outputs/' + str(prefix) + '_hapdict.csv'
@@ -234,7 +227,7 @@ def run_merge(
     # read meta file into csv file
     df_metadata = pd.read_csv(metaFile)
     # make uniform format for column name and date and host
-    df_metadata, dict_cols = data_preprocessing(df_metadata)
+    df_metadata, dict_cols = data_preprocessing(df_metadata, userColumn)
     print("Data Pre-Processing is done.")
     # print(df_metadata.columns)
     for index, row in tqdm(df_metadata.iterrows(), leave=False, desc="Parsing samples"):
@@ -279,6 +272,7 @@ def run_merge(
 
     hap_df = pd.read_csv(hapdict_path, header=None)
     hap_df.rename(columns={hap_df.columns[0]: 'sampleID'}, inplace=True)
+    rows = hap_df[hap_df['sampleID'].str.contains('\.')] # Carol New 2026 unchanged but to double check these
     rows = hap_df[hap_df['sampleID'].str.contains('\.')]
     rows['sampleID'] = rows['sampleID'].str.split('\.').str[0]
     hap_df.update(rows)
@@ -291,16 +285,23 @@ def run_merge(
     # merge hap_df and metadata based on sampleID
     mutData = pd.merge(df_metadata, hap_df, on='sampleID')
     mutData.to_csv('outputs/' + prefix + "_ratioData.csv", index=False)
-
     # categorize data based on userColumn
     print("Categorize data based on the " + userColumn + '...')
     selectedMutations = {}
     if userColumn.lower() == 'continent':
         supergroup = mutData.continent.unique()
+        print(supergroup)
     if userColumn.lower() == 'country':
         supergroup = mutData.country.unique()
+        print(supergroup)
     if userColumn.lower() == 'lineage':
         supergroup = mutData.lineage.unique()
+        print(supergroup)
+    else: # Carol New 2026 Added to have user defined coulumn as supergroup (category)
+        supergroup = mutData[userColumn.lower()].unique() # 10 March 2026
+        print(supergroup)
+
+
     ratio_out = 'outputs/' + prefix + '_' + userColumn + 'Ratios_' + str(R2_threshold) + '.csv'
     for item in tqdm(supergroup, 'R2 ratio analysis'):
         selectedMutations[item] = {}
@@ -310,6 +311,8 @@ def run_merge(
             selectedData = mutData[mutData.country.eq(item)]
         if userColumn.lower() == 'lineage':
             selectedData = mutData[mutData.lineage.eq(item)]
+        else: # Carol New 2026 Added to select the data based on user defined column
+            selectedData = mutData[mutData[userColumn].eq(item)]
         for m in mutations:
             subset = selectedData[['Days', m]]
             subset.columns = ['Days', 'Mutation']
@@ -348,9 +351,6 @@ warnings.filterwarnings("ignore")
 
 
 from typing import Optional
-
-
-    
 
 
 def main():
