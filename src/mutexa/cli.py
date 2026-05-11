@@ -34,6 +34,8 @@ def print_usage():
     print("  -t, --thresh   Frequency threshold (default: 0)")
     print("  -d, --days     Sliding window days (default: 14)")
     print("  -r, --ref      Reference genome FASTA")
+    print("  -ms,--sample   Minimum sample requirement for sliding window days (default=10)")
+
     print("  -h, --help     Show this help message")
     print()
 
@@ -62,6 +64,7 @@ def main():
     parser.add_argument("-p", "--prefix", default="output")
     parser.add_argument("-t", "--thresh", default=0)
     parser.add_argument("-d", "--days", default=14)
+    parser.add_argument("-ms", "--sample", default=10)
     parser.add_argument("-r", "--ref")
 
     args = parser.parse_args()
@@ -108,6 +111,7 @@ def main():
         prefix=args.prefix,
         days=args.days,
         category=args.cat
+        sample = args.sample
     )
 
     run_plots(
