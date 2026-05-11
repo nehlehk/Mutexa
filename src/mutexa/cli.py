@@ -9,11 +9,12 @@ from .check_format import check_mutfile_format, check_metafile_format
 GREEN = "\033[0;32m"
 RED = "\033[0;31m"
 NC = "\033[0m"
+BOLD_GREEN = '\033[1;92m'
 
 
 def print_usage():
     print()
-    print(f"{GREEN}MuTEXA v1.0.0{NC}")
+    print(f"{BOLD_GREEN}MuTEXA v1.0.0{NC}")
     print(f"{GREEN}Mutation EXplorer & Analyzer{NC}")
     print()
     print("Usage:")
@@ -86,8 +87,7 @@ def main():
         print_usage()
         exit(1)
 
-    # print("MuTEXA v1.0")
-    print(f"{GREEN}MuTEXA v1.0{NC}")
+    print(f"{BOLD_GREEN}MuTEXA v1.0{NC}")
 
     check_mutfile_format(args.mut)
     check_metafile_format(args.meta)
