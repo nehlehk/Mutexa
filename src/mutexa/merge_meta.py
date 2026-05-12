@@ -95,6 +95,7 @@ def data_preprocessing(df,userColumn):
                 elif choice == 'n':
                     # Remove the row(s) that meet the condition
                     print(f'Removing row(s) with date: {df[collectDate].loc[mask].iloc[0]}')
+                    replaced_len = 0
                     df = df[~mask]
                 else:
                     print("Error: Invalid choice. Please enter 'yes' or 'no.")
