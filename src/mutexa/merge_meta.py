@@ -81,6 +81,7 @@ def data_preprocessing(df,userColumn):
             # Create a mask for rows that meet the condition, check dates that are in the format YYYY-MM, if not prompt user add as first day of month or remove.
             mask = df[collectDate].str.match(pattern_day, na=False)
             complete_len = len(df[~mask])
+            replaced_len = 0
             # Check if any row meets the condition
             if mask.any():
                 # Prompt the user
@@ -95,7 +96,7 @@ def data_preprocessing(df,userColumn):
                 elif choice == 'n':
                     # Remove the row(s) that meet the condition
                     print(f'Removing row(s) with date: {df[collectDate].loc[mask].iloc[0]}')
-                    replaced_len = 0
+                    
                     df = df[~mask]
                 else:
                     print("Error: Invalid choice. Please enter 'yes' or 'no.")
