@@ -147,7 +147,7 @@ def run_extract(mut_file: str, align_file: str, ref_genome: Optional[str] = None
                         lineDict[loc].append(line[loc - 1])
                     else:
                         print("Error: Ref specified in mutation file doesn't match reference at location:", loc)
-	sampleNamelist = list(set(sampleNamelist))
+    sampleNamelist = list(set(sampleNamelist))
     if input_type == 'vcf' or input_type == 'vcfgz':
         print("Reading VCF...")
         positions_to_keep = [int(pos[:-1]) for pos in vcfPosList]
