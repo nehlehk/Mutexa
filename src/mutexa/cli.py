@@ -110,7 +110,7 @@ def main():
         mut=args.mut,
         prefix=args.prefix,
         days=args.days,
-        category=args.cat
+        category=args.cat,
         sample = args.sample
     )
 
