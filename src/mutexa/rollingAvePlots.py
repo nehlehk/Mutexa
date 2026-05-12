@@ -233,7 +233,7 @@ def run_plots(
                 plt.yticks(rotation=0)
                 show.set(ylabel=None)
                 show.grid(False)
-                plt.subplots_adjust(bottom=0.3)
+                plt.subplots_adjust(bottom=0.3, left=0.2)
                 plt.savefig('outputs/' + prefix + '_Heatmaps_mut:' + m + '_t:' + str(threshold) + '.jpeg') # Hash if you don't want these plots
 
             else:
