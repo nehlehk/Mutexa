@@ -141,17 +141,17 @@ def run_extract(mut_file: str, align_file: str, ref_genome: Optional[str] = None
 
     if input_type == 'fasta':
         print('Reading FASTA file...')
-        with open(alignFile, mode='r') as handle:
-            for record in tqdm(SeqIO.parse(handle, 'fasta')):
-                sampleNamelist.append(extract_sample_id(record.id))
-                line = str(record.seq).upper()
-                for pos in vcfPosList:
-                    ref = pos[-1]
-                    loc = int(pos[:-1])
-                    if str(refline[loc - 1]).upper() == ref:
-                        lineDict[loc].append(line[loc - 1])
-                    else:
-                        print("Error: Ref specified in mutation file doesn't match reference at location:", loc)
+            for record in tqdm(SeqIO.parse(handle, 'fasta'), unit=" records", desc="Parsing"):
+                for record in tqdm(SeqIO.parse(handle, 'fasta')):
+                    sampleNamelist.append(extract_sample_id(record.id))
+                    line = str(record.seq).upper()
+                    for pos in vcfPosList:
+                        ref = pos[-1]
+                        loc = int(pos[:-1])
+                        if str(refline[loc - 1]).upper() == ref:
+                            lineDict[loc].append(line[loc - 1])
+                        else:
+                            print("Error: Ref specified in mutation file doesn't match reference at location:", loc)
     
     sampleNamelist = list(dict.fromkeys(sampleNamelist)) # Remove duplicate IDs and keep ID order
 
@@ -159,19 +159,28 @@ def run_extract(mut_file: str, align_file: str, ref_genome: Optional[str] = None
         print('Reading VCF...')
         positions_to_keep = [int(pos[:-1]) for pos in vcfPosList]
         actual2ref = {i: i for i in range(1, 50000)} # max genome of 50k, increase if genome is larger
-        with (gzip.open if input_type == 'vcfgz' else open)(alignFile, 'rt') as handle:
-            for line in handle:
-                if line.startswith('#CHROM'):
-                    fields = line.strip().split('\t')
-                    sampleNamelist.extend(fields[9:])
-                    continue
-                if line.startswith('#'):
-                    continue
-                fields = line.strip().split('\t')
-                chrom, pos, ref, alt = fields[:4]
-                if int(pos) in positions_to_keep:
-                    altDict[actual2ref[int(pos)]].append(fields[4])
-                    lineDict[actual2ref[int(pos)]].append(fields[9:])
+        with tqdm(total=os.path.getsize(alignFile), unit="B", unit_scale=True, unit_divisor=1024) as pbar:
+            with (gzip.open if input_type == 'vcfgz' else open)(alignFile, 'rt') as handle:
+                for line in handle:
+                    last_pos = 0
+                    for line in handle:
+                        if input_type == "vcfgz":
+                            pos = handle.buffer.fileobj.tell() # compressed size
+                        else:
+                            pos = handle.tell() # plain file size
+                        pbar.update(pos - last_pos)
+                        last_pos = pos
+                        if line.startswith('#CHROM'):
+                            fields = line.strip().split('\t')
+                            sampleNamelist.extend(fields[9:])
+                            continue
+                        if line.startswith('#'):
+                            continue
+                        fields = line.strip().split('\t')
+                        chrom, pos, ref, alt = fields[:4]
+                        if int(pos) in positions_to_keep:
+                            altDict[actual2ref[int(pos)]].append(fields[4])
+                            lineDict[actual2ref[int(pos)]].append(fields[9:])
 
     print('Extracted variants of interest')
     print('Categorizing variants')
