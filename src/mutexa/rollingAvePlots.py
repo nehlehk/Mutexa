@@ -205,7 +205,7 @@ def run_plots(
                     'y': results.index.tolist(),          # e.g., IIb, IIa, Ia etc
                     'z': results.values.tolist(),         
                     'showscale': True}  
-            with open('outputs/' + prefix + '_' + m + str(threshold) + '_heatmapmatrix.json', 'w') as f:
+            with open('outputs/' + prefix + '_' + m  + '_' + userColumn + str(threshold) + '_heatmapmatrix.json', 'w') as f:
                 json.dump(plotly_dict, f)
             results = results.rename_axis(userColumn)
             
@@ -234,7 +234,7 @@ def run_plots(
                 show.set(ylabel=None)
                 show.grid(False)
                 plt.subplots_adjust(bottom=0.3, left=0.2)
-                plt.savefig('outputs/' + prefix + '_Heatmaps_mut:' + m + '_t:' + str(threshold) + '.jpeg') # Hash if you don't want these plots
+                plt.savefig('outputs/' + prefix + '_' + m  + '_' + userColumn + str(threshold) + '_Heatmap.jpeg') # Hash if you don't want these plots
 
             else:
                 print(m)
@@ -257,7 +257,7 @@ def run_plots(
     mutcounts_m2 = pd.concat(mutcounts_m, axis=1)
     mutcounts_m2 = mutcounts_m2.loc[:, ~mutcounts_m2.columns.duplicated()]
     mutcounts_m2 = mutcounts_m2.replace(np.nan, 0.00)    
-    mutcounts_m2.to_csv('outputs/' + prefix + 'mutcounts.csv') # save if total counts per mutation/group needed
+    #mutcounts_m2.to_csv('outputs/' + prefix + 'mutcounts.csv') # save if total counts per mutation/group needed
 
     # Select mutations to plot rolling average if sum of mutations more than 10
     rolling_pass = mutcounts_m2.loc[:, (mutcounts_m2.sum() > 10)].columns.tolist() # Carol - Save mutation list for only those with sum >10
@@ -341,8 +341,8 @@ def run_plots(
 
             plt.tight_layout()
             plot.yaxis.set_major_formatter(matplotlib.ticker.StrMethodFormatter('{x:,.0f}'))
-            plt.savefig('outputs/' + prefix + '_RollingAvg_mut:' + m + '_t:' + str(threshold) + '.jpeg', bbox_inches='tight', dpi=600) # Hash if you don't want these plots
-            result.to_csv('outputs/' + prefix + '_RollingAvg_mut' +  m + '_t' + str(threshold) + '.csv') # Save csv to plot in notebook
+            plt.savefig('outputs/' + prefix + '_' + m  + '_' + userColumn + str(threshold) + '_RollingAve.jpeg', bbox_inches='tight', dpi=600) # Hash if you don't want these plots
+            result.to_csv('outputs/' + prefix + '_' + m  + '_' + userColumn + str(threshold) + '_RollingAve.csv') # Save csv to plot in notebook
         else:
             print(m)
             print('No observed mutations')
