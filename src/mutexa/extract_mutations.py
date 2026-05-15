@@ -11,7 +11,6 @@ import gzip
 from typing import Optional
 # import pysam
 
-print("Running debugged version 1 May 2026")
 def check_file_extension(file_path):
     # Get the file extension
     _, file_extension = os.path.splitext(file_path)
