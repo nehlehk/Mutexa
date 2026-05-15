@@ -358,7 +358,7 @@ def main():
     parser = argparse.ArgumentParser(description='Create rolling average plots')
     parser.add_argument('-s', '--startDate')
     parser.add_argument('-e', '--endDate')
-    parser.add_argument('-t', '--threshold', default=0)
+    parser.add_argument('-t', '--threshold', default=0.5)
     parser.add_argument('-u', '--mutFile', required=True)
     parser.add_argument('-p', '--prefix', default='output')
     parser.add_argument('-c', '--cat', default='country')
