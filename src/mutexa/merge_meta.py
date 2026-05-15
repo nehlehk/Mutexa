@@ -189,7 +189,7 @@ def run_merge(
     try:
         R2_threshold = float(threshold)
     except ValueError:
-        R2_threshold = 0.0
+        R2_threshold = 0.5
 
     metaFile = meta
     mutFile = mut
