@@ -381,7 +381,7 @@ def main():
     parser.add_argument('-s', '--start', required=True)
     parser.add_argument('-e', '--end', required=True)
     parser.add_argument('-m', '--meta', required=True)
-    parser.add_argument('-t', '--thresh', default=0, type=float)
+    parser.add_argument('-t', '--thresh', default=0.5, type=float)
     parser.add_argument('-u', '--mut', required=True)
     parser.add_argument('-p', '--prefix', default='output')
     parser.add_argument('-d', '--days', default=14, type=int)
