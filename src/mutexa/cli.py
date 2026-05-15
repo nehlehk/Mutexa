@@ -62,7 +62,7 @@ def main():
     parser.add_argument("-s", "--start")
     parser.add_argument("-e", "--end")
     parser.add_argument("-p", "--prefix", default="output")
-    parser.add_argument("-t", "--thresh", default=0)
+    parser.add_argument("-t", "--thresh", default=0.5)
     parser.add_argument("-d", "--days", default=14)
     parser.add_argument("-ms", "--sample", default=10)
     parser.add_argument("-r", "--ref")
