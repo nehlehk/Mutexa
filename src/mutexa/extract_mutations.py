@@ -139,14 +139,14 @@ def run_extract(mut_file: str, align_file: str, ref_genome: Optional[str] = None
             print('Error: Try another reference genome or check reference input in mutation list!')
             raise SystemExit(1)
 
-    if input_type == 'fasta':
-        print('Reading FASTA file...')
-        for record in tqdm(SeqIO.parse(handle, 'fasta'), unit=" records", desc="Parsing"):
-            for record in tqdm(SeqIO.parse(handle, 'fasta')):
+   if input_type == 'fasta':
+        print("Reading FASTA file...")
+        with open(alignFile, mode='r') as handle:
+            for record in tqdm(SeqIO.parse(handle, 'fasta'), unit=" records", desc="Parsing"):
                 sampleNamelist.append(extract_sample_id(record.id))
                 line = str(record.seq).upper()
                 for pos in vcfPosList:
-                    ref = pos[-1]
+                    ref = pos[-1].upper()
                     loc = int(pos[:-1])
                     if str(refline[loc - 1]).upper() == ref:
                         lineDict[loc].append(line[loc - 1])
