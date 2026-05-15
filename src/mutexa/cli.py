@@ -31,7 +31,7 @@ def print_usage():
     print("Optional arguments:")
     print("  -e, --end      End date (default: today)")
     print("  -p, --prefix   Output prefix (default: output)")
-    print("  -t, --thresh   Frequency threshold (default: 0)")
+    print("  -t, --thresh   Frequency threshold (default: 0.5)")
     print("  -d, --days     Sliding window days (default: 14)")
     print("  -r, --ref      Reference genome FASTA")
     print("  -ms,--sample   Minimum sample requirement for sliding window days (default=10)")
