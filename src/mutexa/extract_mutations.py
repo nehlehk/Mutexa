@@ -141,17 +141,17 @@ def run_extract(mut_file: str, align_file: str, ref_genome: Optional[str] = None
 
     if input_type == 'fasta':
         print('Reading FASTA file...')
-            for record in tqdm(SeqIO.parse(handle, 'fasta'), unit=" records", desc="Parsing"):
-                for record in tqdm(SeqIO.parse(handle, 'fasta')):
-                    sampleNamelist.append(extract_sample_id(record.id))
-                    line = str(record.seq).upper()
-                    for pos in vcfPosList:
-                        ref = pos[-1]
-                        loc = int(pos[:-1])
-                        if str(refline[loc - 1]).upper() == ref:
-                            lineDict[loc].append(line[loc - 1])
-                        else:
-                            print("Error: Ref specified in mutation file doesn't match reference at location:", loc)
+        for record in tqdm(SeqIO.parse(handle, 'fasta'), unit=" records", desc="Parsing"):
+            for record in tqdm(SeqIO.parse(handle, 'fasta')):
+                sampleNamelist.append(extract_sample_id(record.id))
+                line = str(record.seq).upper()
+                for pos in vcfPosList:
+                    ref = pos[-1]
+                    loc = int(pos[:-1])
+                    if str(refline[loc - 1]).upper() == ref:
+                        lineDict[loc].append(line[loc - 1])
+                    else:
+                        print("Error: Ref specified in mutation file doesn't match reference at location:", loc)
     
     sampleNamelist = list(dict.fromkeys(sampleNamelist)) # Remove duplicate IDs and keep ID order
 
